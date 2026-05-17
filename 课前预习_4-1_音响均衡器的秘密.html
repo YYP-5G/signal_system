@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>课前预习 · 音响均衡器的秘密</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #0e0f18;
+    --bg-dark2: #141520;
+    --bg-light: #f4f4f1;
+    --accent-green: #22c55e;
+    --accent-lime: #84cc16;
+    --accent-emerald: #10b981;
+    --accent-cyan: #06b6d4;
+    --accent-amber: #f59e0b;
+    --accent-violet: #8b5cf6;
+    --accent-blue: #3b82f6;
+    --accent-rose: #f43f5e;
+    --accent-orange: #f97316;
+    --text-white: #edf1f7;
+    --text-muted: #7e8a9e;
+    --text-dark: #1e2433;
+    --text-body: #4e5668;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    max-width: 480px;
+    margin: 0 auto;
+    overflow-x: hidden;
+  }
+
+  /* ===== COVER ===== */
+  .cover {
+    background: linear-gradient(172deg, #060810 0%, #0c1018 35%, #101826 100%);
+    padding: 48px 24px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    min-height: 510px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 60%, rgba(34,197,94,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 30% 40%, rgba(132,204,22,0.04) 0%, transparent 40%);
+    pointer-events: none;
+  }
+
+  .cover-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.22);
+    border-radius: 24px;
+    padding: 8px 22px;
+    font-size: 14px;
+    color: rgba(34,197,94,0.9);
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    backdrop-filter: blur(8px);
+    position: relative; z-index: 2;
+  }
+
+  .cover-badge::before { content: '📡'; font-size: 16px; }
+
+  .cover-chapter {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+    border-radius: 10px;
+    padding: 6px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+    position: relative; z-index: 2;
+  }
+
+  .cover h1 {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--text-white);
+    line-height: 1.4;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    position: relative; z-index: 2;
+  }
+
+  .cover h1 em { font-style: normal; color: var(--accent-green); }
+
+  .cover .subtitle {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    letter-spacing: 1px;
+    position: relative; z-index: 2;
+  }
+
+  /* EQ Bars Visual */
+  .eq-visual {
+    position: relative; z-index: 2;
+    width: 240px;
+    height: 100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .eq-bar-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .eq-bar {
+    width: 18px;
+    border-radius: 4px 4px 2px 2px;
+    position: relative;
+  }
+
+  .eq-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(to top, currentColor, currentColor);
+    opacity: 0.15;
+  }
+
+  .eq-bar.b1 { height: 65px; color: var(--accent-rose); background: var(--accent-rose); animation: eqPulse 1.8s ease-in-out infinite; }
+  .eq-bar.b2 { height: 80px; color: var(--accent-orange); background: var(--accent-orange); animation: eqPulse 2.1s ease-in-out infinite 0.2s; }
+  .eq-bar.b3 { height: 50px; color: var(--accent-amber); background: var(--accent-amber); animation: eqPulse 1.5s ease-in-out infinite 0.4s; }
+  .eq-bar.b4 { height: 90px; color: var(--accent-green); background: var(--accent-green); animation: eqPulse 2.4s ease-in-out infinite 0.1s; }
+  .eq-bar.b5 { height: 70px; color: var(--accent-emerald); background: var(--accent-emerald); animation: eqPulse 1.9s ease-in-out infinite 0.3s; }
+  .eq-bar.b6 { height: 55px; color: var(--accent-cyan); background: var(--accent-cyan); animation: eqPulse 2.2s ease-in-out infinite 0.5s; }
+  .eq-bar.b7 { height: 40px; color: var(--accent-blue); background: var(--accent-blue); animation: eqPulse 1.7s ease-in-out infinite 0.15s; }
+  .eq-bar.b8 { height: 30px; color: var(--accent-violet); background: var(--accent-violet); animation: eqPulse 2.0s ease-in-out infinite 0.35s; }
+
+  @keyframes eqPulse {
+    0%, 100% { transform: scaleY(1); opacity: 0.85; }
+    50% { transform: scaleY(0.7); opacity: 0.6; }
+  }
+
+  .eq-hz {
+    font-size: 8px;
+    color: rgba(255,255,255,0.25);
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  .cover-slogan {
+    margin-top: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.22);
+    letter-spacing: 3px;
+    font-weight: 300;
+    position: relative; z-index: 2;
+  }
+
+  /* ===== Common ===== */
+  .section-light { background: var(--bg-light); padding: 40px 24px 44px; }
+  .section-dark { background: var(--bg-dark); padding: 40px 24px 44px; }
+
+  .section-divider {
+    height: 5px;
+    background: linear-gradient(90deg, var(--accent-rose), var(--accent-orange), var(--accent-amber), var(--accent-green), var(--accent-cyan), var(--accent-blue), var(--accent-violet));
+  }
+
+  .card-num {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    font-size: 16px; font-weight: 700;
+    color: #fff; margin-bottom: 18px;
+  }
+
+  .card-num.green { background: var(--accent-green); }
+  .card-num.amber { background: var(--accent-amber); }
+  .card-num.cyan { background: var(--accent-cyan); }
+  .card-num.violet { background: var(--accent-violet); }
+
+  .section-title { font-size: 24px; font-weight: 800; line-height: 1.4; margin-bottom: 14px; }
+  .section-dark .section-title { color: var(--text-white); }
+  .section-light .section-title { color: var(--text-dark); }
+
+  .section-desc { font-size: 15px; line-height: 1.8; margin-bottom: 24px; }
+  .section-dark .section-desc { color: var(--text-muted); }
+  .section-light .section-desc { color: var(--text-body); }
+
+  .hl-green { color: var(--accent-green); font-weight: 700; }
+  .hl-amber { color: var(--accent-amber); font-weight: 700; }
+  .hl-cyan { color: var(--accent-cyan); font-weight: 700; }
+  .hl-violet { color: var(--accent-violet); font-weight: 700; }
+  .hl-rose { color: var(--accent-rose); font-weight: 700; }
+
+  /* ===== CARD 2: EQ Scene ===== */
+  .eq-presets {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .eq-preset {
+    background: #fff;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  .ep-icon-wrap {
+    width: 50px; height: 50px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .eq-preset:nth-child(1) .ep-icon-wrap { background: #fef2f2; }
+  .eq-preset:nth-child(2) .ep-icon-wrap { background: #f0fdf4; }
+  .eq-preset:nth-child(3) .ep-icon-wrap { background: #eff6ff; }
+
+  .ep-text { flex: 1; min-width: 0; }
+
+  .ep-name { font-size: 15px; font-weight: 800; margin-bottom: 2px; }
+  .eq-preset:nth-child(1) .ep-name { color: var(--accent-rose); }
+  .eq-preset:nth-child(2) .ep-name { color: var(--accent-green); }
+  .eq-preset:nth-child(3) .ep-name { color: var(--accent-blue); }
+
+  .ep-desc { font-size: 12px; color: var(--text-body); line-height: 1.5; }
+  .ep-desc strong { color: var(--text-dark); }
+
+  /* Mini EQ curve SVG */
+  .ep-curve {
+    width: 56px; height: 32px;
+    flex-shrink: 0;
+  }
+
+  .epc-axis { stroke: #e8e8e8; stroke-width: 0.8; }
+  .epc-line { fill: none; stroke-width: 2; stroke-linecap: round; }
+
+  .eq-bridge {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px 18px;
+    text-align: center;
+    border: 1.5px solid rgba(34,197,94,0.12);
+  }
+
+  .eb-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+
+  .eb-text {
+    font-size: 15px; font-weight: 700;
+    color: var(--text-dark); line-height: 1.7;
+  }
+
+  .eb-text .eb-hl { color: var(--accent-green); }
+
+  /* ===== CARD 3: Sunglasses Analogy ===== */
+  .analogy-duo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .ana-col {
+    border-radius: 14px;
+    padding: 16px 12px;
+    text-align: center;
+  }
+
+  .ana-col.anc-sun {
+    background: rgba(245,158,11,0.06);
+    border: 1.5px solid rgba(245,158,11,0.12);
+  }
+
+  .ana-col.anc-eq {
+    background: rgba(34,197,94,0.06);
+    border: 1.5px solid rgba(34,197,94,0.12);
+  }
+
+  .anc-icon { font-size: 32px; display: block; margin-bottom: 6px; }
+
+  .anc-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+  .anc-sun .anc-title { color: var(--accent-amber); }
+  .anc-eq .anc-title { color: var(--accent-green); }
+
+  .anc-desc { font-size: 12px; line-height: 1.6; }
+  .section-dark .anc-desc { color: var(--text-muted); }
+  .anc-desc strong { color: var(--text-white); }
+
+  /* Sieve SVG */
+  .sieve-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 20px 16px;
+    margin-bottom: 16px;
+  }
+
+  .sieve-label {
+    font-size: 14px; font-weight: 700;
+    color: var(--accent-green);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .sieve-svg { width: 100%; height: 90px; display: block; }
+
+  .sv-arrow { fill: none; stroke-width: 1.5; stroke-linecap: round; }
+  .sv-block { rx: 8; }
+  .sv-text { font-weight: 700; }
+
+  .sieve-sub {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .sieve-sub strong { color: var(--accent-green); }
+
+  .core-insight {
+    background: rgba(34,197,94,0.08);
+    border-left: 4px solid var(--accent-green);
+    border-radius: 0 12px 12px 0;
+    padding: 14px 16px;
+    font-size: 14px; line-height: 1.8;
+    color: var(--text-muted);
+  }
+
+  .core-insight strong { color: var(--accent-green); }
+
+  /* ===== CARD 4: Bridge from Ch3 ===== */
+  .bridge-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px 20px;
+    margin-bottom: 16px;
+  }
+
+  .bridge-label {
+    font-size: 14px; font-weight: 700;
+    color: var(--accent-violet);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* Two-step flow */
+  .step-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .step-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .step-badge {
+    width: 56px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  .step-badge-inner {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .sbi-ch3 { background: rgba(139,92,246,0.1); color: var(--accent-violet); }
+  .sbi-ch4 { background: rgba(34,197,94,0.1); color: var(--accent-green); }
+
+  .step-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .sc-pill {
+    padding: 5px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .sc-pill.sp-sig { background: rgba(245,158,11,0.1); color: var(--accent-amber); }
+  .sc-pill.sp-ft { background: rgba(139,92,246,0.1); color: var(--accent-violet); }
+  .sc-pill.sp-sys { background: rgba(34,197,94,0.1); color: var(--accent-green); }
+  .sc-pill.sp-out { background: rgba(6,182,212,0.1); color: var(--accent-cyan); }
+
+  .sc-arrow { color: #ccc; font-size: 14px; }
+
+  .step-arrow-down {
+    text-align: center;
+    padding-left: 56px;
+    color: #ddd;
+    font-size: 14px;
+  }
+
+  .bridge-reveal {
+    background: #f0fdf4;
+    border: 1.5px solid rgba(34,197,94,0.15);
+    border-radius: 14px;
+    padding: 16px 18px;
+    text-align: center;
+  }
+
+  .br-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+
+  .br-text {
+    font-size: 15px; font-weight: 700;
+    color: var(--text-dark); line-height: 1.7;
+  }
+
+  .br-text .br-hl { color: var(--accent-green); }
+
+  .br-sub { font-size: 12px; color: var(--text-body); margin-top: 6px; }
+
+  .bridge-insight {
+    margin-top: 16px;
+    background: #faf5ff;
+    border-left: 4px solid var(--accent-violet);
+    border-radius: 0 12px 12px 0;
+    padding: 14px 16px;
+    font-size: 14px; line-height: 1.8;
+    color: var(--text-body);
+  }
+
+  .bridge-insight strong { color: var(--accent-violet); }
+
+  /* ===== Task ===== */
+  .task-section {
+    background: var(--bg-dark2);
+    padding: 40px 24px 52px;
+  }
+
+  .task-title {
+    font-size: 20px; font-weight: 800; color: var(--text-white);
+    margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+  }
+
+  .task-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+
+  .task-card-num {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    color: #fff; font-size: 14px; font-weight: 700;
+    margin-right: 10px; flex-shrink: 0;
+    vertical-align: middle;
+  }
+
+  .tcn-green { background: var(--accent-green); }
+  .tcn-cyan { background: var(--accent-cyan); }
+
+  .task-card-main {
+    font-size: 15px; font-weight: 600; color: var(--text-white); line-height: 1.6;
+  }
+
+  .task-card-main .num-hl { color: var(--accent-amber); font-weight: 800; }
+
+  .task-card-sub {
+    font-size: 13px; color: var(--text-muted); margin-top: 6px; padding-left: 38px;
+  }
+
+  .task-quote {
+    font-size: 14px; font-weight: 600; color: var(--accent-cyan);
+    padding-left: 38px; line-height: 1.7; margin-top: 8px;
+  }
+
+  .footer-cta {
+    text-align: center; margin-top: 32px;
+    font-size: 16px; font-weight: 700; letter-spacing: 2px;
+  }
+
+  .footer-cta .cta-text {
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ========== CARD 1: COVER ========== -->
+<section class="cover">
+  <div class="cover-badge">信号与系统 · 课前预习</div>
+  <div class="cover-chapter">第 4 章 · 系统的频域分析</div>
+  <h1>音响<em>均衡器</em>的秘密</h1>
+  <p class="subtitle">—— 系统如何"挑选"频率</p>
+
+  <div class="eq-visual">
+    <div class="eq-bar-col"><div class="eq-bar b1"></div><span class="eq-hz">60</span></div>
+    <div class="eq-bar-col"><div class="eq-bar b2"></div><span class="eq-hz">150</span></div>
+    <div class="eq-bar-col"><div class="eq-bar b3"></div><span class="eq-hz">400</span></div>
+    <div class="eq-bar-col"><div class="eq-bar b4"></div><span class="eq-hz">1k</span></div>
+    <div class="eq-bar-col"><div class="eq-bar b5"></div><span class="eq-hz">2.5k</span></div>
+    <div class="eq-bar-col"><div class="eq-bar b6"></div><span class="eq-hz">6k</span></div>
+    <div class="eq-bar-col"><div class="eq-bar b7"></div><span class="eq-hz">12k</span></div>
+    <div class="eq-bar-col"><div class="eq-bar b8"></div><span class="eq-hz">16k</span></div>
+  </div>
+
+  <p class="cover-slogan">同一首歌，不同的味道</p>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ========== CARD 2: EQ Scene ========== -->
+<section class="section-light">
+  <div class="card-num green fade-up">1</div>
+  <h2 class="section-title fade-up">同一首歌为什么听起来不同？</h2>
+  <p class="section-desc fade-up">打开手机音乐播放器，切换不同的均衡器预设——同一首歌，瞬间变了味道。为什么？</p>
+
+  <div class="eq-presets fade-up">
+    <div class="eq-preset">
+      <div class="ep-icon-wrap">🔊</div>
+      <div class="ep-text">
+        <div class="ep-name">低音增强</div>
+        <div class="ep-desc"><strong>低频加大</strong>，高频不变——鼓声轰隆隆</div>
+      </div>
+      <svg class="ep-curve" viewBox="0 0 56 32">
+        <line class="epc-axis" x1="2" y1="28" x2="54" y2="28"/>
+        <path class="epc-line" d="M4,8 Q14,8 22,16 Q32,22 42,22 Q50,22 54,22" stroke="var(--accent-rose)" />
+      </svg>
+    </div>
+    <div class="eq-preset">
+      <div class="ep-icon-wrap">🎤</div>
+      <div class="ep-text">
+        <div class="ep-name">人声突出</div>
+        <div class="ep-desc"><strong>中频提升</strong>，两端削弱——人声更清晰</div>
+      </div>
+      <svg class="ep-curve" viewBox="0 0 56 32">
+        <line class="epc-axis" x1="2" y1="28" x2="54" y2="28"/>
+        <path class="epc-line" d="M4,22 Q14,20 22,10 Q32,8 42,18 Q50,22 54,24" stroke="var(--accent-green)"/>
+      </svg>
+    </div>
+    <div class="eq-preset">
+      <div class="ep-icon-wrap">✨</div>
+      <div class="ep-text">
+        <div class="ep-name">高音清亮</div>
+        <div class="ep-desc"><strong>高频提升</strong>，低频不变——钹声更明亮</div>
+      </div>
+      <svg class="ep-curve" viewBox="0 0 56 32">
+        <line class="epc-axis" x1="2" y1="28" x2="54" y2="28"/>
+        <path class="epc-line" d="M4,22 Q14,22 22,22 Q32,18 42,10 Q50,6 54,6" stroke="var(--accent-blue)"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="eq-bridge fade-up">
+    <span class="eb-icon">💡</span>
+    <div class="eb-text">背后的秘密：系统对不同频率的信号<br>做了<span class="eb-hl">不同的处理</span>！</div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ========== CARD 3: Sieve Analogy ========== -->
+<section class="section-dark">
+  <div class="card-num amber fade-up">2</div>
+  <h2 class="section-title fade-up">系统就是"频率筛子"</h2>
+  <p class="section-desc fade-up">太阳镜滤掉<span class="hl-amber">强光</span>保留<span class="hl-green">温和光线</span>；均衡器滤掉某些频率保留另一些。系统对信号做的事，就像一把<span class="hl-green">"频率筛子"</span>。</p>
+
+  <div class="analogy-duo fade-up">
+    <div class="ana-col anc-sun">
+      <span class="anc-icon">🕶️</span>
+      <div class="anc-title">太阳镜</div>
+      <div class="anc-desc">滤掉<strong>强光（紫外线）</strong><br>保留温和可见光</div>
+    </div>
+    <div class="ana-col anc-eq">
+      <span class="anc-icon">🎛️</span>
+      <div class="anc-title">均衡器/系统</div>
+      <div class="anc-desc">滤掉<strong>某些频率</strong><br>增强/保留另一些</div>
+    </div>
+  </div>
+
+  <div class="sieve-card fade-up">
+    <div class="sieve-label">🔬 信号通过系统后发生了什么？</div>
+    <svg class="sieve-svg" viewBox="0 0 260 90">
+      <!-- Input signal -->
+      <rect class="sv-block" x="5" y="25" width="60" height="40" fill="rgba(245,158,11,0.12)" stroke="rgba(245,158,11,0.3)" stroke-width="1.5"/>
+      <text x="35" y="42" fill="var(--accent-amber)" font-size="10" font-weight="700" text-anchor="middle">输入信号</text>
+      <text x="35" y="54" fill="var(--text-muted)" font-size="8" text-anchor="middle">多种频率混合</text>
+
+      <!-- Arrow -->
+      <line x1="68" y1="45" x2="95" y2="45" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" marker-end="url(#arrW)"/>
+      <defs><marker id="arrW" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0L5,2.5L0,5Z" fill="rgba(255,255,255,0.3)"/></marker></defs>
+
+      <!-- System (sieve) -->
+      <rect class="sv-block" x="98" y="18" width="64" height="54" fill="rgba(34,197,94,0.1)" stroke="rgba(34,197,94,0.3)" stroke-width="1.5"/>
+      <text x="130" y="36" fill="var(--accent-green)" font-size="11" font-weight="800" text-anchor="middle">系统</text>
+      <text x="130" y="48" fill="var(--accent-green)" font-size="9" font-weight="600" text-anchor="middle">H(jω)</text>
+      <text x="130" y="62" fill="var(--text-muted)" font-size="7" text-anchor="middle">"频率筛子"</text>
+
+      <!-- Arrow -->
+      <line x1="165" y1="45" x2="192" y2="45" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" marker-end="url(#arrW)"/>
+
+      <!-- Output signal -->
+      <rect class="sv-block" x="195" y="25" width="60" height="40" fill="rgba(6,182,212,0.12)" stroke="rgba(6,182,212,0.3)" stroke-width="1.5"/>
+      <text x="225" y="42" fill="var(--accent-cyan)" font-size="10" font-weight="700" text-anchor="middle">输出信号</text>
+      <text x="225" y="54" fill="var(--text-muted)" font-size="8" text-anchor="middle">幅度&相位改变</text>
+    </svg>
+    <div class="sieve-sub">每个频率通过系统后，<strong>幅度</strong>和<strong>相位</strong>都可能改变——系统对每个频率"区别对待"</div>
+  </div>
+
+  <div class="core-insight fade-up">
+    <strong>⭐ 核心直觉：</strong>系统不是对所有频率一视同仁的——它像一把筛子，让某些频率轻松通过，把另一些频率削弱甚至完全挡住。描述这种"区别对待"方式的，就叫做系统的"频率响应"。
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ========== CARD 4: Bridge from Ch3 ========== -->
+<section class="section-light">
+  <div class="card-num violet fade-up">3</div>
+  <h2 class="section-title fade-up">从第3章到第4章的桥梁</h2>
+  <p class="section-desc fade-up">第3章用傅里叶变换把信号<span class="hl-violet">"拆"成了一个个频率分量</span>。现在的问题是：这些分量通过系统后会怎样？</p>
+
+  <div class="bridge-card fade-up">
+    <div class="bridge-label">🔗 两章之间的逻辑</div>
+
+    <div class="step-flow">
+      <div class="step-row">
+        <div class="step-badge"><span class="step-badge-inner sbi-ch3">第3章</span></div>
+        <div class="step-content">
+          <span class="sc-pill sp-sig">信号 f(t)</span>
+          <span class="sc-arrow">→</span>
+          <span class="sc-pill sp-ft">傅里叶变换</span>
+          <span class="sc-arrow">→</span>
+          <span class="sc-pill sp-sig">各频率分量</span>
+        </div>
+      </div>
+
+      <div class="step-arrow-down">↓ 分量进入系统……</div>
+
+      <div class="step-row">
+        <div class="step-badge"><span class="step-badge-inner sbi-ch4">第4章</span></div>
+        <div class="step-content">
+          <span class="sc-pill sp-sig">各频率分量</span>
+          <span class="sc-arrow">×</span>
+          <span class="sc-pill sp-sys">H(jω)</span>
+          <span class="sc-arrow">=</span>
+          <span class="sc-pill sp-out">输出频谱</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bridge-reveal">
+      <span class="br-icon">🔑</span>
+      <div class="br-text">答案就藏在<span class="br-hl">"频率响应 H(jω)"</span>里<br>——它完整描述了系统对每个频率的处理方式</div>
+      <div class="br-sub">知道了 H(jω)，就掌握了系统的全部"性格"</div>
+    </div>
+  </div>
+
+  <div class="bridge-insight fade-up">
+    <strong>💡 学习路线图：</strong>第3章解决了"信号有哪些频率成分"；第4章要解决"系统如何处理这些频率成分"。两章加在一起，就构成了频域分析的完整图景——用频率的语言理解信号和系统。
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ========== CARD 5: TASK ========== -->
+<section class="task-section">
+  <div class="task-title fade-up">📋 课前小任务</div>
+
+  <div class="task-card fade-up">
+    <span class="task-card-num tcn-green">1</span>
+    <span class="task-card-main">完成学习通上的 <span class="num-hl">3道</span>测验题</span>
+    <div class="task-card-sub">很简单，2分钟能做完，做完就是满分 ✅</div>
+  </div>
+
+  <div class="task-card fade-up">
+    <span class="task-card-num tcn-cyan">2</span>
+    <span class="task-card-main">在讨论区回答：</span>
+    <div class="task-quote">"你在手机音乐APP上调节'低音增强'后，歌曲听起来有什么变化？你觉得系统对信号做了什么？"</div>
+    <div class="task-card-sub">可以截图你的均衡器设置，说说听到的差别</div>
+  </div>
+
+  <div class="footer-cta fade-up">
+    <span class="cta-text">打开均衡器试试看，下节课见 🚀</span>
+  </div>
+</section>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
